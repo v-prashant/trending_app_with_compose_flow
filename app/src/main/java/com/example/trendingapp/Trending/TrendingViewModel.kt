@@ -3,15 +3,15 @@ package com.example.trendingapp.Trending
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.trendingapp.model.GetRepositoriesResponse
 import com.example.trendingapp.model.Item
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class TrendingViewModel @Inject constructor(private val repository: TrendingRepository): ViewModel() {
 
     private val _repositories = MutableStateFlow<List<Item>>(emptyList())

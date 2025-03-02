@@ -16,11 +16,13 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -34,19 +36,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.trendingapp.R
 import com.example.trendingapp.Trending.TrendingViewModel
 import com.example.trendingapp.model.Item
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrendingScreen(trendingVM: TrendingViewModel?) {
+fun TrendingScreen(trendingVM: TrendingViewModel = hiltViewModel()) {
 
     LaunchedEffect(Unit) {
-        trendingVM!!.getRepositories()
+        trendingVM.getRepositories()
     }
-    val repositories = trendingVM!!.repositories.collectAsState()
+    val repositories = trendingVM.repositories.collectAsState()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -58,10 +62,17 @@ fun TrendingScreen(trendingVM: TrendingViewModel?) {
             },
             contentWindowInsets = WindowInsets.statusBars
         ) { innerPadding ->
-            TrendingList(
-                modifier = Modifier.padding(paddingValues = innerPadding),
-                repositories
-            )
+            if(repositories.value.isEmpty())
+                ErrorScreen(modifier = Modifier.padding(paddingValues = innerPadding),
+                    onClick = {
+                        trendingVM.getRepositories()
+                    })
+            else{
+                TrendingList(
+                    modifier = Modifier.padding(paddingValues = innerPadding),
+                    repositories
+                )
+            }
         }
     }
 }
@@ -149,5 +160,5 @@ fun TrendingCard(trendingItem: Item) {
 @Preview(showBackground = true, widthDp = 300, heightDp = 500)
 @Composable
 fun TrendingScreenPreview() {
-    TrendingScreen(null)
+    TrendingScreen()
 }

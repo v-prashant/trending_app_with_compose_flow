@@ -9,13 +9,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.trendingapp.screens.TrendingScreen
 import com.example.trendingapp.ui.theme.TrendingAppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class TrendingActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var trendingViewModel: TrendingViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +25,7 @@ class TrendingActivity : ComponentActivity() {
     @Composable
     fun App() {
         TrendingAppTheme {
-            TrendingScreen(trendingViewModel)
+            TrendingScreen()
         }
     }
 
