@@ -16,16 +16,13 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -41,9 +38,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.trendingapp.R
 import com.example.trendingapp.Trending.TrendingViewModel
+import com.example.trendingapp.api.UiState
 import com.example.trendingapp.model.Item
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrendingScreen(trendingVM: TrendingViewModel = hiltViewModel()) {
 
@@ -62,27 +59,33 @@ fun TrendingScreen(trendingVM: TrendingViewModel = hiltViewModel()) {
             },
             contentWindowInsets = WindowInsets.statusBars
         ) { innerPadding ->
-            if(repositories.value.isEmpty())
-                ErrorScreen(modifier = Modifier.padding(paddingValues = innerPadding),
-                    onClick = {
-                        trendingVM.getRepositories()
-                    })
-            else{
-                TrendingList(
-                    modifier = Modifier.padding(paddingValues = innerPadding),
-                    repositories
-                )
+            when (repositories.value) {
+                is UiState.Loading -> SkeletonTrendingScreen(modifier = Modifier.padding(paddingValues = innerPadding))
+                is UiState.Error -> {
+                    (repositories.value is UiState.Success)
+                    ErrorScreen(modifier = Modifier.padding(paddingValues = innerPadding),
+                        onClick = {
+                            trendingVM.getRepositories()
+                        })
+                }
+                else -> {
+                    TrendingList(
+                        modifier = Modifier.padding(paddingValues = innerPadding),
+                        repo = (repositories.value as UiState.Success).data
+                    )
+                }
             }
+
         }
     }
 }
 
 @Composable
-fun TrendingList(modifier: Modifier, repositories: State<List<Item>>) {
+fun TrendingList(modifier: Modifier, repo: List<Item>) {
 
     LazyColumn(modifier = modifier) {
-        items(repositories.value.size) { index ->
-            TrendingCard(repositories.value[index])
+        items(repo.size) { index ->
+            TrendingCard(repo[index])
         }
     }
 
