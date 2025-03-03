@@ -62,7 +62,6 @@ fun TrendingScreen(trendingVM: TrendingViewModel = hiltViewModel()) {
             when (repositories.value) {
                 is UiState.Loading -> SkeletonTrendingScreen(modifier = Modifier.padding(paddingValues = innerPadding))
                 is UiState.Error -> {
-                    (repositories.value is UiState.Success)
                     ErrorScreen(modifier = Modifier.padding(paddingValues = innerPadding),
                         onClick = {
                             trendingVM.getRepositories()
