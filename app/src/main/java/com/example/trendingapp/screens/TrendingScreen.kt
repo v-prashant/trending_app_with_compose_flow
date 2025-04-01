@@ -44,9 +44,6 @@ import com.example.trendingapp.model.Item
 @Composable
 fun TrendingScreen(trendingVM: TrendingViewModel = hiltViewModel()) {
 
-    LaunchedEffect(Unit) {
-        trendingVM.getRepositories()
-    }
     val repositories = trendingVM.repositories.collectAsState()
 
     Surface(

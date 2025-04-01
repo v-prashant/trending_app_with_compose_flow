@@ -15,6 +15,10 @@ import javax.inject.Inject
 @HiltViewModel
 class TrendingViewModel @Inject constructor(private val repository: TrendingRepository): ViewModel() {
 
+    init {
+        getRepositories()
+    }
+
     private val _repositories = MutableStateFlow<UiState<List<Item>>>(UiState.Loading)
     val repositories = _repositories.asStateFlow()
 
